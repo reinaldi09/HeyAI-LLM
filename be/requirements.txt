@@ -1,0 +1,25 @@
+# RAG & LLM
+langchain
+langchain-community
+langchain-text-splitters
+langchain-ollama
+langchain-google-genai
+chromadb
+pymupdf
+docx2txt
+
+# Web framework
+fastapi
+uvicorn[standard]
+pydantic
+email-validator
+python-multipart
+
+# Database (PostgreSQL async)
+sqlalchemy[asyncio]
+asyncpg
+psycopg2-binary
+
+# Utilities
+python-dotenv
+PyJWT
