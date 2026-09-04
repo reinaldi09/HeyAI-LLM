@@ -311,7 +311,7 @@ export function UsersPage() {
                               <p className="text-xs font-medium text-ink-500">Pemeriksaan medis</p>
                               <p className="whitespace-pre-wrap text-sm text-ink-800">{record.objective}</p>
                               {record.hasil_assessment && (
-                                <AssessmentHistoryContent content={record.hasil_assessment} outputMode={record.output_mode} />
+                                <AssessmentHistoryContent content={record.hasil_assessment} />
                               )}
                             </div>
                           )}

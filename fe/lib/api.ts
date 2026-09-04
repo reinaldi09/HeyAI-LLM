@@ -1,4 +1,3 @@
-export type OutputMode = "summary" | "expanded";
 export type JenisKelamin = "laki-laki" | "perempuan";
 export type UserRole = "superadmin" | "apoteker";
 export type EntityId = string;
@@ -49,7 +48,6 @@ export interface RekamMedisResponse {
   nomor_rekam_medis: string;
   subjective: string;
   objective: string;
-  output_mode: OutputMode;
   hasil_assessment: string | null;
   created_at: string;
   updated_at: string;
@@ -59,7 +57,6 @@ export interface RekamMedisCreate {
   pasien_id: EntityId;
   subjective: string;
   objective: string;
-  output_mode: OutputMode;
 }
 
 // Asesmen
@@ -67,12 +64,10 @@ export interface PharmaRequest {
   pasien_id: EntityId;
   subjective: string;
   objective: string;
-  output_mode: OutputMode;
   simpan: boolean;
 }
 
 export interface PharmaResponse {
-  output_mode: OutputMode;
   result: string;
   rekam_medis_id?: EntityId;
   nomor_rekam_medis?: string | null;
@@ -89,7 +84,6 @@ export interface AssessmentJobResponse {
   nomor_rekam_medis: string | null;
   subjective: string;
   objective: string;
-  output_mode: OutputMode;
   simpan: boolean;
   status: AssessmentJobStatus;
   result: string | null;

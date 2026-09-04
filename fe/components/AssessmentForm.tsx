@@ -3,11 +3,9 @@
 import { FlaskConical, Save, UserRound, Zap } from "lucide-react";
 import { ErrorAlert } from "@/components/ErrorAlert";
 import { LoadingIndicator } from "@/components/LoadingIndicator";
-import { OutputModeSelector } from "@/components/OutputModeSelector";
 import { PasienSelector } from "@/components/PasienSelector";
 import { ResultPanel } from "@/components/ResultPanel";
 import { TextArea } from "@/components/TextArea";
-import type { OutputMode } from "@/lib/api";
 import {
   resetAssessmentResult,
   startAssessment,
@@ -15,8 +13,6 @@ import {
   useAssessmentState,
 } from "@/lib/assessment-store";
 import { cn } from "@/lib/utils";
-
-const MAX_CHARS = 2000;
 
 const EXAMPLE_CASES = [
   {
@@ -36,7 +32,7 @@ const EXAMPLE_CASES = [
 ];
 
 export function AssessmentForm() {
-  const { pasien, simpan, subjective, objective, outputMode, isLoading, result, error } = useAssessmentState();
+  const { pasien, simpan, subjective, objective, isLoading, result, error } = useAssessmentState();
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -44,7 +40,7 @@ export function AssessmentForm() {
     startAssessment();
   };
 
-  const hasValidInput = subjective.trim().length > 10 && objective.trim().length > 10;
+  const hasValidInput = Boolean(subjective.trim()) && Boolean(objective.trim());
   const canAnalyze = Boolean(pasien) && hasValidInput;
 
   if (result) {
@@ -112,9 +108,6 @@ export function AssessmentForm() {
           onChange={(event) => updateAssessmentState({ subjective: event.target.value, result: null, error: null })}
           placeholder="Contoh: DM tipe 2, mengeluh..."
           rows={5}
-          maxLength={MAX_CHARS}
-          charCount={subjective.length}
-          maxChars={MAX_CHARS}
           disabled={isLoading}
         />
 
@@ -126,17 +119,7 @@ export function AssessmentForm() {
           onChange={(event) => updateAssessmentState({ objective: event.target.value, result: null, error: null })}
           placeholder="Contoh: HbA1c: 9,2%, GDS: 280 mg/dL, TD: 140/90 mmHg..."
           rows={4}
-          maxLength={MAX_CHARS}
-          charCount={objective.length}
-          maxChars={MAX_CHARS}
           disabled={isLoading}
-        />
-
-        <OutputModeSelector
-          value={outputMode}
-          onChange={(mode: OutputMode) => updateAssessmentState({ outputMode: mode, result: null, error: null })}
-          disabled={isLoading}
-          selectedOnly={isLoading}
         />
 
         {error && <ErrorAlert message={error} onDismiss={() => updateAssessmentState({ error: null })} />}

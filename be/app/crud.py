@@ -161,7 +161,6 @@ async def create_assessment_job(
         pasien_id=data.pasien_id,
         subjective=data.subjective,
         objective=data.objective,
-        output_mode=data.output_mode,
         simpan=simpan,
         status="pending",
     )

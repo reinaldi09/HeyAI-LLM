@@ -76,7 +76,6 @@ async def process_assessment_job(job_id: UUID) -> None:
                 generate_pharma_assessment,
                 subjective=job.subjective,
                 objective=job.objective,
-                output_mode=job.output_mode,
             )
 
             rekam_medis_id = None
@@ -88,7 +87,6 @@ async def process_assessment_job(job_id: UUID) -> None:
                         pasien_id=job.pasien_id,
                         subjective=job.subjective,
                         objective=job.objective,
-                        output_mode=job.output_mode,
                     ),
                     hasil_assessment=hasil,
                 )
@@ -393,7 +391,6 @@ async def buat_assessment_job(
             pasien_id=request.pasien_id,
             subjective=request.subjective,
             objective=request.objective,
-            output_mode=request.output_mode,
         ),
         apoteker_id=current_user.id,
         simpan=request.simpan,
@@ -429,7 +426,6 @@ async def pharma_assessment(
             generate_pharma_assessment,
             subjective=request.subjective,
             objective=request.objective,
-            output_mode=request.output_mode,
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"RAG error: {str(e)}")
@@ -443,7 +439,6 @@ async def pharma_assessment(
                 pasien_id=request.pasien_id,
                 subjective=request.subjective,
                 objective=request.objective,
-                output_mode=request.output_mode,
             ),
             hasil_assessment=hasil,
         )
@@ -451,7 +446,6 @@ async def pharma_assessment(
         nomor_rekam_medis = rekam.nomor_rekam_medis
 
     return PharmaResponse(
-        output_mode=request.output_mode,
         result=hasil,
         rekam_medis_id=rekam_medis_id,
         nomor_rekam_medis=nomor_rekam_medis,

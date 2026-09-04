@@ -5,7 +5,6 @@ import {
   createAssessmentJob,
   getAssessmentJob,
   type AssessmentJobResponse,
-  type OutputMode,
   type PasienSingkat,
   type PharmaResponse,
 } from "@/lib/api";
@@ -16,7 +15,6 @@ interface AssessmentState {
   simpan: boolean;
   subjective: string;
   objective: string;
-  outputMode: OutputMode;
   isLoading: boolean;
   result: PharmaResponse | null;
   error: string | null;
@@ -30,7 +28,6 @@ const initialState: AssessmentState = {
   simpan: true,
   subjective: "",
   objective: "",
-  outputMode: "summary",
   isLoading: false,
   result: null,
   error: null,
@@ -76,7 +73,6 @@ export function updateAssessmentState(patch: AssessmentPatch) {
     "pasien" in patch ||
     "subjective" in patch ||
     "objective" in patch ||
-    "outputMode" in patch ||
     "simpan" in patch;
 
   if (changesAssessmentInput && !state.isLoading && !("jobId" in patch)) {
@@ -115,7 +111,6 @@ function clearStoredJobId() {
 function mapJobToResult(job: AssessmentJobResponse): PharmaResponse | null {
   if (job.status !== "completed" || !job.result) return null;
   return {
-    output_mode: job.output_mode,
     result: job.result,
     rekam_medis_id: job.rekam_medis_id || undefined,
     nomor_rekam_medis: job.nomor_rekam_medis,
@@ -132,7 +127,6 @@ function applyJobState(job: AssessmentJobResponse) {
     simpan: job.simpan,
     subjective: job.subjective,
     objective: job.objective,
-    outputMode: job.output_mode,
     isLoading: isActive,
     result: mapJobToResult(job),
     error: isFailed ? job.error_message || "Asesmen gagal diproses" : null,
@@ -180,7 +174,6 @@ export function startAssessment() {
     pasien_id: state.pasien.id,
     subjective: state.subjective.trim(),
     objective: state.objective.trim(),
-    output_mode: state.outputMode,
     simpan: state.simpan,
   };
 

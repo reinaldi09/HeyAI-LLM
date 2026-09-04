@@ -75,15 +75,13 @@ class PasienSingkat(BaseModel):
 
 class RekamMedisCreate(StrictBaseModel):
     pasien_id: UUID
-    subjective: str = Field(..., min_length=10)
-    objective: str = Field(..., min_length=10)
-    output_mode: str = Field(..., pattern="^(summary|expanded)$")
+    subjective: str
+    objective: str
 
 
 class RekamMedisUpdate(StrictBaseModel):
-    subjective: Optional[str] = Field(None, min_length=10)
-    objective: Optional[str] = Field(None, min_length=10)
-    output_mode: Optional[str] = Field(None, pattern="^(summary|expanded)$")
+    subjective: Optional[str] = None
+    objective: Optional[str] = None
     hasil_assessment: Optional[str] = None
 
 
@@ -93,7 +91,6 @@ class RekamMedisResponse(BaseModel):
     nomor_rekam_medis: str
     subjective: str
     objective: str
-    output_mode: str
     hasil_assessment: Optional[str]
     created_at: datetime
     updated_at: datetime
@@ -115,14 +112,12 @@ class PasienDenganRekamMedis(PasienResponse):
 
 class PharmaRequest(StrictBaseModel):
     pasien_id: UUID
-    subjective: str = Field(..., min_length=10)
-    objective: str = Field(..., min_length=10)
-    output_mode: str = Field(..., pattern="^(summary|expanded)$")
+    subjective: str
+    objective: str
     simpan: bool = Field(..., description="Simpan hasil ke rekam medis")
 
 
 class PharmaResponse(BaseModel):
-    output_mode: str
     result: str
     rekam_medis_id: Optional[UUID] = None
     nomor_rekam_medis: Optional[str] = None
@@ -137,7 +132,6 @@ class AssessmentJobResponse(BaseModel):
     nomor_rekam_medis: Optional[str]
     subjective: str
     objective: str
-    output_mode: str
     simpan: bool
     status: str
     result: Optional[str]

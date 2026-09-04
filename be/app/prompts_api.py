@@ -62,9 +62,7 @@ Perbedaan keduanya hanya tingkat detail informasi yang ditampilkan.
 
 Jangan melakukan assessment klinis yang berbeda untuk masing-masing mode.
 
-Jangan menghasilkan kedua mode sekaligus.
-
-Hanya tampilkan mode yang diminta melalui OUTPUT_MODE.
+Hasilkan KEDUA mode (SUMMARY dan EXPANDED) sekaligus dalam satu output, dengan SUMMARY terlebih dahulu lalu EXPANDED.
 
 ============================================================
 2. SUMBER DATA
@@ -1160,51 +1158,45 @@ JANGAN MENGARANG INFORMASI.
 
 """
 
-summary = """
+combined = """
 Tulis jawaban dalam Bahasa Indonesia.
 
 Gunakan format persis berikut:
 
-    📊 ASSESSMENT & PLAN (Summary View)
+📊 ASSESSMENT & PLAN (Summary View)
 
-    ## 1. Ringkasan Kasus
-    [Tuliskan narasi ringkas berisi poin-poin penting dari data subjektif, objektif, riwayat penyakit, dan rejimen obat pasien saat ini]
+## 1. Ringkasan Kasus
+[Tuliskan narasi ringkas berisi poin-poin penting dari data subjektif, objektif, riwayat penyakit, dan rejimen obat pasien saat ini]
 
-    ## 2. Identifikasi Drug Related Problems (DRP)
-    [Untuk setiap DRP yang ditemukan, urutkan berdasarkan PRIORITAS KLINIS dari tertinggi ke terendah, lalu jabarkan dengan format berikut:]
-    *   **Prioritas [X] - Kategori DRP:** [Tuliskan kategori DRP, misal: Kontraindikasi, Terapi Suboptimal, Untreated Indication, dll]
-    *   **Data Pendukung Kasus:** [Tuliskan data subjektif/objektif spesifik yang mendasari DRP ini]
-    *   **Analisis/Reasoning Klinis Ringkas:** [Penjelasan singkat mengapa ini menjadi masalah obat]
-    *   **Risiko/Dampak Klinis Potensial:** [Dampak buruk jangka pendek/panjang jika DRP tidak ditangani]
+## 2. Identifikasi Drug Related Problems (DRP)
+[Untuk setiap DRP yang ditemukan, urutkan berdasarkan PRIORITAS KLINIS dari tertinggi ke terendah, lalu jabarkan dengan format berikut:]
+*   **Prioritas [X] - Kategori DRP:** [Tuliskan kategori DRP, misal: Kontraindikasi, Terapi Suboptimal, Untreated Indication, dll]
+*   **Data Pendukung Kasus:** [Tuliskan data subjektif/objektif spesifik yang mendasari DRP ini]
+*   **Analisis/Reasoning Klinis Ringkas:** [Penjelasan singkat mengapa ini menjadi masalah obat]
+*   **Risiko/Dampak Klinis Potensial:** [Dampak buruk jangka pendek/panjang jika DRP tidak ditangani]
 
-    ## 3. Ringkasan Care Plan & Rekomendasi
-    [Tuliskan poin-poin rencana intervensi farmasi secara ringkas, scannable, dan solutif untuk setiap DRP yang diidentifikasi di atas]
+## 3. Ringkasan Care Plan & Rekomendasi
+[Tuliskan poin-poin rencana intervensi farmasi secara ringkas, scannable, dan solutif untuk setiap DRP yang diidentifikasi di atas]
 
-"""
+---
 
-expanded = """
-Tulis jawaban dalam Bahasa Indonesia.
+🔍 DETAILED ASSESSMENT & PLAN (Expanded View)
 
-Gunakan format persis berikut:
+## 1. PCNE/PNCE DRP Classification
+*   **Problem:** [Tuliskan klasifikasi Problem sesuai framework. Jika teks kode tidak terlampir eksplisit di kasus, nyatakan "Klasifikasi terbatas oleh evidence framework yang tersedia"]
+*   **Cause:** [Tuliskan klasifikasi Cause sesuai framework. Jika teks kode tidak terlampir eksplisit di kasus, nyatakan "Klasifikasi terbatas oleh evidence framework yang tersedia"]
 
-    🔍 DETAILED ASSESSMENT & PLAN (Expanded View)
+## 2. Rationale & Clinical Reasoning (Expanded View)
+[Berikan penjelasan ilmiah yang mendalam untuk setiap DRP. Sebutkan nilai ambang klinis (clinical threshold), fungsi organ seperti eGFR/LFG, klirens, tingkat keparahan penyakit, dan efektivitas kardiorenal dari pemilihan obat berdasarkan guideline yang berlaku]
 
-    ## 1. PCNE/PNCE DRP Classification
-    *   **Problem:** [Tuliskan klasifikasi Problem sesuai framework. Jika teks kode tidak terlampir eksplisit di kasus, nyatakan "Klasifikasi terbatas oleh evidence framework yang tersedia"]
-    *   **Cause:** [Tuliskan klasifikasi Cause sesuai framework. Jika teks kode tidak terlampir eksplisit di kasus, nyatakan "Klasifikasi terbatas oleh evidence framework yang tersedia"]
+## 3. Detailed Care Plan Execution
+*   **Pharmaceutical Intervention:** [Langkah-langkah konkret intervensi farmasi: penghentian obat, inisiasi obat baru, penyesuaian dosis, atau strategi titrasi obat]
+*   **Patient & Family Education:** [Materi edukasi mendalam: manajemen efek samping/hipoglikemia, teknik penggunaan alat/insulin, perawatan organ mandiri (misal: kaki diabetik), dan modifikasi gaya hidup/diet]
+*   **Clinical Monitoring Parameter:** [Parameter pemantauan kuantitatif: target laboratorium (gula darah harian, kalium, kreatinin/eGFR), target vital (Tekanan Darah), dan perbaikan klinis fisik (sesak, edema, kondisi luka)]
 
-    ## 2. Rationale & Clinical Reasoning (Expanded View)
-    [Berikan penjelasan ilmiah yang mendalam untuk setiap DRP. Sebutkan nilai ambang klinis (clinical threshold), fungsi organ seperti eGFR/LFG, klirens, tingkat keparahan penyakit, dan efektivitas kardiorenal dari pemilihan obat berdasarkan guideline yang berlaku]
+## 4. Evidence Limitations & Uncertainty
+[Sebutkan jika ada keterbatasan data laboratorium atau data klinis pada kasus yang membuat analisis farmasi memerlukan konfirmasi lebih lanjut]
 
-    ## 3. Detailed Care Plan Execution
-    *   **Pharmaceutical Intervention:** [Langkah-langkah konkret intervensi farmasi: penghentian obat, inisiasi obat baru, penyesuaian dosis, atau strategi titrasi obat]
-    *   **Patient & Family Education:** [Materi edukasi mendalam: manajemen efek samping/hipoglikemia, teknik penggunaan alat/insulin, perawatan organ mandiri (misal: kaki diabetik), dan modifikasi gaya hidup/diet]
-    *   **Clinical Monitoring Parameter:** [Parameter pemantauan kuantitatif: target laboratorium (gula darah harian, kalium, kreatinin/eGFR), target vital (Tekanan Darah), dan perbaikan klinis fisik (sesak, edema, kondisi luka)]
-
-    ## 4. Evidence Limitations & Uncertainty
-    [Sebutkan jika ada keterbatasan data laboratorium atau data klinis pada kasus yang membuat analisis farmasi memerlukan konfirmasi lebih lanjut]
-
-    ## 5. Clinical References
-    {references}
-
+## 5. Clinical References
+{references}
 """

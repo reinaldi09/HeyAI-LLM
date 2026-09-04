@@ -13,6 +13,7 @@ npm-debug.log*
 .env.staging
 
 storage.zip
+heyAI-be-pharma/
 
 storage/*
 !storage/.gitkeep

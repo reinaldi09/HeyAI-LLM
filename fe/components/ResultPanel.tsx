@@ -1,11 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import { AssessmentResultView } from "@/components/AssessmentResultView";
 import { BookMarked, CheckCheck, ChevronDown, ChevronUp, Copy, Database, User } from "lucide-react";
 import type { PasienSingkat, PharmaResponse } from "@/lib/api";
-import { cn } from "@/lib/utils";
 
 interface ResultPanelProps {
   result: PharmaResponse;
@@ -48,16 +46,6 @@ export function ResultPanel({ result, pasien, onReset }: ResultPanelProps) {
             <BookMarked size={12} className="text-sage-100" />
           </div>
           <h2 className="text-sm font-medium text-ink-800">Hasil asesmen farmasi</h2>
-          <span
-            className={cn(
-              "rounded-full px-2 py-0.5 text-xs font-medium",
-              result.output_mode === "expanded"
-                ? "bg-sage-100 text-sage-700"
-                : "bg-ink-100 text-ink-600"
-            )}
-          >
-            {result.output_mode === "expanded" ? "Lengkap" : "Ringkas"}
-          </span>
         </div>
         <div className="flex items-center gap-2">
           <button
@@ -87,9 +75,7 @@ export function ResultPanel({ result, pasien, onReset }: ResultPanelProps) {
 
       <div className="overflow-hidden rounded-[24px] border border-white/70 bg-white/[0.72] shadow-[0_22px_70px_rgba(31,52,85,0.10)] backdrop-blur-2xl">
         <div className="p-6">
-          <div className="prose-clinical max-w-none">
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>{result.result}</ReactMarkdown>
-          </div>
+          <AssessmentResultView content={result.result} />
         </div>
         <div className="border-t border-ink-100">
           <button

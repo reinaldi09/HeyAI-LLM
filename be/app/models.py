@@ -97,7 +97,6 @@ class RekamMedis(Base):
     nomor_rekam_medis: Mapped[str] = mapped_column(String(20), unique=True, nullable=False, index=True)
     subjective: Mapped[str] = mapped_column(Text, nullable=False)
     objective: Mapped[str] = mapped_column(Text, nullable=False)
-    output_mode: Mapped[str] = mapped_column(String(20), default="summary")
     hasil_assessment: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
@@ -128,7 +127,6 @@ class AssessmentJob(Base):
     nomor_rekam_medis: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)
     subjective: Mapped[str] = mapped_column(Text, nullable=False)
     objective: Mapped[str] = mapped_column(Text, nullable=False)
-    output_mode: Mapped[str] = mapped_column(String(20), nullable=False)
     simpan: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     status: Mapped[str] = mapped_column(String(20), nullable=False, default="pending", index=True)
     result: Mapped[Optional[str]] = mapped_column(Text, nullable=True)

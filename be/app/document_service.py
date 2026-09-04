@@ -7,15 +7,17 @@ from uuid import uuid4
 from fastapi import HTTPException, UploadFile, status
 from langchain_community.document_loaders import PyMuPDFLoader
 from langchain_community.vectorstores import Chroma
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
+from langchain_openai import OpenAIEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 
 DATA_DIR = Path(os.getenv("DATA_DIR", "data"))
 DB_DIR = Path(os.getenv("VECTOR_DB_DIR", "vector_db"))
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-GEMINI_EMBED_MODEL = os.getenv("GEMINI_EMBED_MODEL", "gemini-embedding-2")
+EMBED_API_KEY = os.getenv("EMBED_API_KEY")
+EMBED_BASE_URL = os.getenv("EMBED_BASE_URL", "https://ai.sumopod.com/v1")
+EMBED_MODEL = os.getenv("EMBED_MODEL", "gemini/gemini-embedding-001")
 MAX_PDF_BYTES = int(os.getenv("MAX_PDF_BYTES", str(100 * 1024 * 1024)))
+EMBED_BATCH_SIZE = int(os.getenv("EMBED_BATCH_SIZE", "50"))
 
 
 def safe_pdf_filename(filename: str) -> str:
@@ -56,6 +58,15 @@ def delete_file(path: str) -> None:
         target.unlink()
 
 
+def clean_documents(documents):
+    for doc in documents:
+        text = doc.page_content
+        text = text.replace("\n", " ")
+        text = text.replace("  ", " ")
+        doc.page_content = text
+    return documents
+
+
 def rebuild_vector_index() -> int:
     documents = []
     DATA_DIR.mkdir(parents=True, exist_ok=True)
@@ -66,13 +77,21 @@ def rebuild_vector_index() -> int:
         for doc in docs:
             doc.metadata["source"] = file.name
             doc.metadata["title"] = file.stem
+            page_num = doc.metadata.get("page", doc.metadata.get("page_number", "N/A"))
+            doc.metadata["page"] = str(page_num)
         documents.extend(docs)
 
     if DB_DIR.exists():
-        shutil.rmtree(DB_DIR)
+        for entry in DB_DIR.iterdir():
+            if entry.is_dir():
+                shutil.rmtree(entry)
+            else:
+                entry.unlink()
 
     if not documents:
         return 0
+
+    documents = clean_documents(documents)
 
     splitter = RecursiveCharacterTextSplitter(
         chunk_size=900,
@@ -80,14 +99,18 @@ def rebuild_vector_index() -> int:
         separators=["\n\n", "\n", ".", " ", ""],
     )
     chunks = splitter.split_documents(documents)
-    embeddings = GoogleGenerativeAIEmbeddings(
-        model=GEMINI_EMBED_MODEL,
-        google_api_key=GEMINI_API_KEY,
-        task_type="retrieval_document",
-    )
-    Chroma.from_documents(
-        documents=chunks,
-        embedding=embeddings,
-        persist_directory=str(DB_DIR),
-    )
+    embeddings = OpenAIEmbeddings(model=EMBED_MODEL, api_key=EMBED_API_KEY, base_url=EMBED_BASE_URL)
+
+    db = None
+    for i in range(0, len(chunks), EMBED_BATCH_SIZE):
+        batch = chunks[i:i + EMBED_BATCH_SIZE]
+        if db is None:
+            db = Chroma.from_documents(
+                documents=batch,
+                embedding=embeddings,
+                persist_directory=str(DB_DIR),
+            )
+        else:
+            db.add_documents(batch)
+
     return len(chunks)
